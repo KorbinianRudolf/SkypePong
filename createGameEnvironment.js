@@ -35,7 +35,7 @@ function updateDatabase() {
     const data = {"cl1": clicked1, "cl2": clicked2, "cl3":clicked3};
 
     fetch(url, {
-        method: 'POST',
+        method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data),
     }).then((res) => res.json())
@@ -92,8 +92,8 @@ gameCanvas.addEventListener('click', function(event) {
    console.log(clicked2);
    console.log(clicked3);
 
-   updateDatabase();
-   updateDisplay();
+   //updateDatabase();
+   //updateDisplay();
 
 });
 
@@ -157,7 +157,7 @@ if(gameCanvas) {
     var context = gameCanvas.getContext('2d');
 
     if(context) {
-        intervalHolder2 = setInterval(updateDisplay, 5000);
+        //intervalHolder2 = setInterval(updateDisplay, 10000);
         intervalHolder = setInterval(mainLoop, 15);
 
     }
