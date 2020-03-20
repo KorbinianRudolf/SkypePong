@@ -4,23 +4,49 @@ var gameCanvas = document.getElementById('gameboard');
 var clicked1 = [0,0,0,0,0,0];
 var clicked2 = [0,0,0,0,0,0];
 var clicked3 = [0,0,0,0,0,0];
-var clicked = [clicked1, clicked2, clicked3];
+var clicked = null;
 var intervalHolder = null;
 var intervalHolder2 = null;
-var url = window.location.protocol + '//' + window.location.host + window.location.pathname + 'status.json';
-
+var url = window.location.protocol + '//' + window.location.host + '/SkypePong/status.json';
+console.log(url);
 var fieldWith = gameCanvas.width/3;
 
+
 function updateDisplay() {
-    fetch(window.location.protocol).then((res) => {
-        return res.json();
-    }).then((data) => {
-        clicked = JSON.parse(data);
-    });
-    clicked1 = clicked[0];
-    clicked2 = clicked[1];
-    clicked3 = clicked[2];
+    fetch(url).then((res) => {
+        if (!res.ok) {
+            throw new Error("HTTP error " + res.status);
+        }
+        clearInterval(intervalHolder2);
+        var j = res.json();
+        j.then((data) => {
+           clicked = data;
+           console.log(clicked);
+           clicked1 = clicked["cl1"];
+           clicked2 = clicked["cl2"];
+           clicked3 = clicked["cl3"];
+           console.log(clicked1);
+           intervalHolder = setInterval(updateDisplay, 2000);
+        });
+    })
 }
+
+function updateDatabase() {
+    const data = {"cl1": clicked1, "cl2": clicked2, "cl3":clicked3};
+
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+    }).then((res) => res.json())
+        .then((data) => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.log('Error: ', error);
+        })
+}
+
 
 gameCanvas.addEventListener('click', function(event) {
    var x = event.pageX;
@@ -35,9 +61,11 @@ gameCanvas.addEventListener('click', function(event) {
    } else if (x < fieldWith*2) {
        start = fieldWith;
        cl = clicked2;
+       console.log("2")
    } else if (x < fieldWith*3) {
        start = fieldWith*2;
        cl = clicked3;
+       console.log("3");
    } else {
        alert("Motherfucker what?");
        return;
@@ -60,6 +88,11 @@ gameCanvas.addEventListener('click', function(event) {
        cl[5] = cl[5] === 0? 1 : 0;
    }
 
+   console.log(clicked1);
+   console.log(clicked2);
+   console.log(clicked3);
+
+   updateDatabase();
    updateDisplay();
 
 });
@@ -76,14 +109,16 @@ function drawCup(ctx, x, y, color) {
     }
 }
 
-function drawGameField(ctx, start, width, clicked, name) {
+function drawGameField(ctx, start, width, cl, name) {
     var dis = (width/4);
 
     var colors = [];
 
+    if(!cl){
+        return;
+    }
 
-
-    clicked.forEach(el => {
+    cl.forEach(el => {
        if(el == 0) {
            colors.push('#ad0211');
        } else {
@@ -122,7 +157,7 @@ if(gameCanvas) {
     var context = gameCanvas.getContext('2d');
 
     if(context) {
-        intervalHolder2 = setInterval(updateDisplay, 2000);
+        intervalHolder2 = setInterval(updateDisplay, 5000);
         intervalHolder = setInterval(mainLoop, 15);
 
     }
