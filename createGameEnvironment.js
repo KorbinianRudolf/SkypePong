@@ -4,9 +4,23 @@ var gameCanvas = document.getElementById('gameboard');
 var clicked1 = [0,0,0,0,0,0];
 var clicked2 = [0,0,0,0,0,0];
 var clicked3 = [0,0,0,0,0,0];
+var clicked = [clicked1, clicked2, clicked3];
+var intervalHolder = null;
+var intervalHolder2 = null;
+var url = window.location.protocol + '//' + window.location.host + window.location.pathname + 'status.json';
 
 var fieldWith = gameCanvas.width/3;
 
+function updateDisplay() {
+    fetch(window.location.protocol).then((res) => {
+        return res.json();
+    }).then((data) => {
+        clicked = JSON.parse(data);
+    });
+    clicked1 = clicked[0];
+    clicked2 = clicked[1];
+    clicked3 = clicked[2];
+}
 
 gameCanvas.addEventListener('click', function(event) {
    var x = event.pageX;
@@ -46,9 +60,9 @@ gameCanvas.addEventListener('click', function(event) {
        cl[5] = cl[5] === 0? 1 : 0;
    }
 
+   updateDisplay();
 
 });
-
 
 function drawCup(ctx, x, y, color) {
     if(ctx) {
@@ -108,7 +122,9 @@ if(gameCanvas) {
     var context = gameCanvas.getContext('2d');
 
     if(context) {
+        intervalHolder2 = setInterval(updateDisplay, 2000);
         intervalHolder = setInterval(mainLoop, 15);
+
     }
 
 } else {
