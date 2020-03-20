@@ -17,6 +17,7 @@ gameCanvas.addEventListener('click', function(event) {
    if(x < fieldWith) {
        start = 0;
        cl = clicked1;
+       console.log("1");
    } else if (x < fieldWith*2) {
        start = fieldWith;
        cl = clicked2;
@@ -28,22 +29,21 @@ gameCanvas.addEventListener('click', function(event) {
        return;
    }
 
-   // delete, just for my stupid brain
 
-    drawCup(ctx, , 15, colors[0]);
-    drawCup(ctx, start + (width/2), 15, colors[1]);
-    drawCup(ctx, start + ((width/4)*3), 15, colors[2]);
-
-    drawCup(ctx, start + (width/3), 15 + dis, colors[3]);
-    drawCup(ctx, start + (width/3)*2, 15 + dis, colors[4]);
-
-    drawCup(ctx, start + (width/2), 15+2*dis, colors[5]);
-
-    // end delete
-
+   var dis =(fieldWith/4);
    var eps = CONSTANTS.CUP_RADIUS;
-   if(Math.abs((start + (width/4)) - x) <= eps ){
-
+   if((Math.abs((start + (fieldWith/4)) - x) <= eps ) && (Math.abs(15 - y) <= eps)){
+        cl[0] = cl[0] === 0? 1 : 0;
+   } else if((Math.abs((start + (fieldWith/2)) - x) <= eps) && (Math.abs(15 - y) <= eps)) {
+       cl[1] = cl[1] === 0? 1 : 0;
+   } else if((Math.abs((start + ((fieldWith/4)*3)) - x) <= eps) && (Math.abs(15 - y) <= eps)) {
+       cl[2] = cl[2] === 0? 1 : 0;
+   } else if((Math.abs((start + (fieldWith/3)) - x ) <= eps) && (Math.abs((15+dis) - y) <= eps)) {
+       cl[3] = cl[3] === 0? 1 : 0;
+   } else if((Math.abs((start + (fieldWith/3)*2) - x ) <= eps) && (Math.abs((15+dis) - y) <= eps)) {
+       cl[4] = cl[4] === 0? 1 : 0;
+   } else if((Math.abs((start + (fieldWith/2)) - x ) <= eps) && (Math.abs((15+2*dis) - y) <= eps)) {
+       cl[5] = cl[5] === 0? 1 : 0;
    }
 
 
@@ -87,8 +87,8 @@ function drawGameField(ctx, start, width, clicked, name) {
 
     drawCup(ctx, start + (width/2), 15+2*dis, colors[5]);
 
-    console.log(name.length/2);
     ctx.font = "30px Arial";
+    ctx.fillStyle = '#ad0211';
     ctx.fillText(name, (start + width/2) - (ctx.measureText(name).width/2), 15+3*dis);
 
 }
