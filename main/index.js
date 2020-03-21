@@ -27,6 +27,7 @@ router.get('/createGameEnvironment.js', (req, res) => {
 } );
 
 router.get('style.css', (req, res) => {
+    res.type('.css');
     res.sendFile(__dirname + '/style.css');
 });
 
