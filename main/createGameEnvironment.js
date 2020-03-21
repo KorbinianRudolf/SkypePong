@@ -178,6 +178,7 @@ if(gameCanvas) {
     var context = gameCanvas.getContext('2d');
 
     if(context) {
+        updateDisplay();
         intervalHolder2 = setInterval(updateDisplay, 5000);
         intervalHolder = setInterval(mainLoop, 15);
 
