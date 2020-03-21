@@ -7,6 +7,8 @@ const app = express();
 
 app.use(bodyparser.urlencoded({extended: true}));
 
+app.use(bodyparser.json());
+
 app.use(morgan('common', {immidiate: true}));
 
 app.use('/', mainRouter);

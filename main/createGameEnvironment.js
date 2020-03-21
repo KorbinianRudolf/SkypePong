@@ -7,7 +7,7 @@ var clicked3 = [0,0,0,0,0,0];
 var clicked = null;
 var intervalHolder = null;
 var intervalHolder2 = null;
-var url = window.location.protocol + '//' + window.location.host + '/SkypePong/status.json';
+var url = window.location.protocol + '//' + window.location.host + '/status';
 console.log(url);
 var fieldWidth = gameCanvas.width/3;
 
@@ -17,7 +17,7 @@ function updateDisplay() {
         if (!res.ok) {
             throw new Error("HTTP error " + res.status);
         }
-        clearInterval(intervalHolder2);
+        //clearInterval(intervalHolder2);
         var j = res.json();
         j.then((data) => {
            clicked = data;
@@ -26,7 +26,7 @@ function updateDisplay() {
            clicked2 = clicked["cl2"];
            clicked3 = clicked["cl3"];
            console.log(clicked1);
-           intervalHolder = setInterval(updateDisplay, 2000);
+           //intervalHolder = setInterval(updateDisplay, 2000);
         });
     })
 }
@@ -39,7 +39,29 @@ function updateDatabase() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({username: 'example'}),
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.log('Error: ', error);
+        })
+}
+
+function reset() {
+
+    clicked1 = [0,0,0,0,0,0];
+    clicked2 = [0,0,0,0,0,0];
+    clicked3 = [0,0,0,0,0,0];
+
+    fetch(window.location.protocol + '//' + window.location.host + '/reset', {
+        method: 'Post',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({message: "reset command"}),
     })
         .then((res) => res.json())
         .then((data) => {
@@ -91,12 +113,8 @@ gameCanvas.addEventListener('click', function(event) {
        cl[5] = cl[5] === 0? 1 : 0;
    }
 
-   console.log(clicked1);
-   console.log(clicked2);
-   console.log(clicked3);
-
    updateDatabase();
-   //updateDisplay();
+   updateDisplay();
 
 });
 
