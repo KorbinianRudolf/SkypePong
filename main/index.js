@@ -26,6 +26,10 @@ router.get('/createGameEnvironment.js', (req, res) => {
     res.sendFile(__dirname + '/createGameEnvironment.js');
 } );
 
+router.get('style.css', (req, res) => {
+    res.sendFile(__dirname + '/style.css');
+});
+
 router.post('/', (req, res) => {
    const data = req.body;
    const jsonFile = fs.readFileSync(__dirname + '/status.json');
