@@ -34,11 +34,14 @@ function updateDisplay() {
 function updateDatabase() {
     const data = {"cl1": clicked1, "cl2": clicked2, "cl3":clicked3};
 
-    fetch(url, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data),
-    }).then((res) => res.json())
+    fetch(window.location.protocol + '//' + window.location.host + '/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({username: 'example'}),
+    })
+        .then((res) => res.json())
         .then((data) => {
             console.log('Success:', data);
         })
@@ -92,7 +95,7 @@ gameCanvas.addEventListener('click', function(event) {
    console.log(clicked2);
    console.log(clicked3);
 
-   //updateDatabase();
+   updateDatabase();
    //updateDisplay();
 
 });
