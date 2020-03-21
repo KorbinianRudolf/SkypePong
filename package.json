@@ -1,0 +1,24 @@
+{
+  "name": "skypepong",
+  "version": "1.0.0",
+  "description": "We have to stay at home due to Corona Virus. But we still want to play beerpong. \r So we talk over skype and keep track of the status of the others via this site.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KorbinianRudolf/SkypePong.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KorbinianRudolf/SkypePong/issues"
+  },
+  "homepage": "https://github.com/KorbinianRudolf/SkypePong#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "morgan": "^1.10.0"
+  }
+}
