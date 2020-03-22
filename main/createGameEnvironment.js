@@ -68,7 +68,6 @@ function updateDatabase() {
     for(let i = 0; i < player; i++) {
         data["cl" + (i+1).toString()] = clicked[i];
     }
-    console.log("data:" + JSON.stringify(data));
 
     fetch(url + '/', {
         method: 'POST',
