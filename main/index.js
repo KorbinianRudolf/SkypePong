@@ -42,8 +42,7 @@ router.post('/', (req, res) => {
 
    for(let i = 0; i < player; i++) {
        let cur = "cl" + (i+1).toString();
-        newStatus[cur] = check(data[cur], status[cur]);
-        console.log("check" + newStatus[cur]);
+        newStatus[cur] = data[cur];
    }
 
    const result = JSON.stringify(newStatus);
@@ -53,7 +52,6 @@ router.post('/', (req, res) => {
 
 router.post('/reset', (req, res) => {
     const jsonFile = fs.readFileSync(__dirname + '/status.json');
-    console.log(jsonFile);
     const status = JSON.parse(jsonFile);
     let player = status["player"];
     let newStatus = {};
