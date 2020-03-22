@@ -1,15 +1,24 @@
-var CONSTANTS = new Constants();
-var gameCanvas = document.getElementById('gameboard');
+let CONSTANTS = new Constants();
+let gameCanvas = document.getElementById('gameboard');
 
-var clicked1 = [0,0,0,0,0,0];
-var clicked2 = [0,0,0,0,0,0];
-var clicked3 = [0,0,0,0,0,0];
-var clicked = null;
-var intervalHolder = null;
-var intervalHolder2 = null;
-var url = window.location.protocol + '//' + window.location.host + '/status';
+let player = 3;
+let names = ["Roman", "Rinz", "Korbinian"];
+let fieldWidth = gameCanvas.width/player;
+let clicked = [];
+
+for(let i = 0; i < player; i++) {
+    clicked.push([0,0,0,0,0,0]);
+}
+
+let clicked1 = clicked[0];
+let clicked2 = clicked[1];
+let clicked3 = clicked[2];
+
+let intervalHolder = null;
+let intervalHolder2 = null;
+let url = window.location.protocol + '//' + window.location.host + '/status';
 console.log(url);
-var fieldWidth = gameCanvas.width/3;
+
 
 
 function updateDisplay() {
@@ -18,7 +27,7 @@ function updateDisplay() {
             throw new Error("HTTP error " + res.status);
         }
         //clearInterval(intervalHolder2);
-        var j = res.json();
+        let j = res.json();
         j.then((data) => {
            clicked = data;
            console.log(clicked);
@@ -74,10 +83,10 @@ function reset() {
 
 
 gameCanvas.addEventListener('click', function(event) {
-   var x = event.pageX;
-   var y = event.pageY;
-   var start = -1;
-   var cl = [];
+   let x = event.pageX;
+   let y = event.pageY;
+   let start = -1;
+   let cl = [];
 
    if(x < fieldWidth) {
        start = 0;
@@ -97,8 +106,8 @@ gameCanvas.addEventListener('click', function(event) {
    }
 
 
-   var dis =(fieldWidth/4);
-   var eps = CONSTANTS.CUP_RADIUS;
+   let dis =(fieldWidth/4);
+   let eps = CONSTANTS.CUP_RADIUS;
    if((Math.abs((start + (fieldWidth/4)) - x) <= eps ) && (Math.abs(15 - y) <= eps)){
         cl[0] = cl[0] === 0? 1 : 0;
    } else if((Math.abs((start + (fieldWidth/2)) - x) <= eps) && (Math.abs(15 - y) <= eps)) {
@@ -131,16 +140,16 @@ function drawCup(ctx, x, y, color) {
 }
 
 function drawGameField(ctx, start, width, cl, name) {
-    var dis = (width/4);
+    let dis = (width/4);        //4, because there are three cups in the first row, so the cups divide the field in 4 parts
 
-    var colors = [];
+    let colors = [];
 
     if(!cl){
         return;
     }
 
     cl.forEach(el => {
-       if(el == 0) {
+       if(el === 0) {
            colors.push('#ad0211');
        } else {
            colors.push('#FFF');
@@ -164,18 +173,17 @@ function drawGameField(ctx, start, width, cl, name) {
 }
 
 function mainLoop() {
-    var context = gameCanvas.getContext('2d');
+    let context = gameCanvas.getContext('2d');
     context.clearRect(0,0,gameCanvas.width, gameCanvas.height);
 
-    drawGameField(context, 0, fieldWidth, clicked1, "Roman");
-    drawGameField(context, fieldWidth, fieldWidth, clicked2, "Rinz");
-    drawGameField(context, fieldWidth*2, fieldWidth, clicked3, "Korbinian");
-
+    for(let i = 0; i < player; i++) {
+        drawGameField(context, i*fieldWidth, fieldWidth, clicked[i], names[i]);
+    }
 
 }
 
 if(gameCanvas) {
-    var context = gameCanvas.getContext('2d');
+    let context = gameCanvas.getContext('2d');
 
     if(context) {
         updateDisplay();
