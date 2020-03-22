@@ -13,6 +13,6 @@ app.use(morgan('common', {immidiate: true}));
 
 app.use('/', mainRouter);
 
-app.listen(80, () => {
-   console.log('Server is listening to http://localhost:80');
+app.listen(8880, () => {
+   console.log('Server is listening to http://localhost:8880');
 });
