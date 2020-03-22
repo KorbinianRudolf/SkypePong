@@ -50,7 +50,7 @@ router.post('/', (req, res) => {
    res.json(result);
 });
 
-router.post('/reset', (req, res) => {
+router.get('/reset', (req, res) => {
     const jsonFile = fs.readFileSync(__dirname + '/status.json');
     const status = JSON.parse(jsonFile);
     let player = status["player"];

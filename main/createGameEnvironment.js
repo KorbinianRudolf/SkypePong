@@ -6,16 +6,9 @@ document.getElementById("reset").onclick = reset;
 let player = 4;
 
 let names = [];
-for(let i = 0; i < player; i++) {
-    names[i] = "player" + (i+1).toString();
-}
 
-let fieldWidth = gameCanvas.width/player;
-let clicked = [];
+let fieldWidth;
 
-for(let i = 0; i < player; i++) {
-    clicked.push([0,0,0,0,0,0]);
-}
 
 
 let intervalHolder = null;
@@ -57,8 +50,10 @@ function updateDisplay() {
            for(let i = 0; i < player; i++) {
                clicked[i] = clicked["cl" + (i+1).toString()];
            }
+
+           player = data["player"];
            console.log(clicked[0]);
-           //intervalHolder = setInterval(updateDisplay, 2000);
+
         });
     })
 }
@@ -87,27 +82,18 @@ function updateDatabase() {
 
 function reset() {
 
-    clicked = [];
-    for(let i = 0; i < player; i++) {
-        clicked.push([0,0,0,0,0,0]);
-    }
+    fetch(url + '/reset').then((res) => {
+        if (!res.ok) {
+            throw new Error("HTTP error " + res.status);
+        }
+        let j = res.json();
+        j.then((data) => {
+            console.log("Reset: " + JSON.stringify(data));
+        });
+    });
 
-    fetch(window.location.protocol + '//' + window.location.host + '/reset', {
-        method: 'Post',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({message: "reset command"}),
-    })
-        .then((res) => res.json())
-        .then((data) => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.log('Error: ', error);
-        })
+    updateDisplay();
 }
-
 
 gameCanvas.addEventListener('click', function(event) {
    let x = event.pageX;
@@ -210,8 +196,17 @@ if(gameCanvas) {
     let context = gameCanvas.getContext('2d');
 
     if(context) {
-        init();
         updateDisplay();
+
+        fieldWidth = gameCanvas.width/player;
+        for(let i = 0; i < player; i++) {
+            names[i] = "player" + (i+1).toString();
+        }
+        let clicked = [];
+        for(let i = 0; i < player; i++) {
+            clicked.push([0,0,0,0,0,0]);
+        }
+
         intervalHolder2 = setInterval(updateDisplay, 5000);
         intervalHolder = setInterval(mainLoop, 15);
 
