@@ -90,16 +90,4 @@ router.get('/status', (req,res) => {
     res.json(status);
 });
 
-function check(clOld, clNew) {
-    res = [];
-    for(i = 0; i < clOld.length; i++) {
-        if(clOld[i] === 1 || clNew[i] === 1) {
-            res.push(1);
-        } else {
-            res.push(0);
-        }
-    }
-    return res;
-}
-
 module.exports = router;
