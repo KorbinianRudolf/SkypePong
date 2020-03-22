@@ -1,8 +1,15 @@
 let CONSTANTS = new Constants();
 let gameCanvas = document.getElementById('gameboard');
+document.getElementById("reset").onclick = reset;
 
-let player = 3;
-let names = ["Roman", "Rinz", "Korbinian"];
+
+let player = 4;
+
+let names = [];
+for(let i = 0; i < player; i++) {
+    names[i] = "player" + (i+1).toString();
+}
+
 let fieldWidth = gameCanvas.width/player;
 let clicked = [];
 
@@ -10,19 +17,35 @@ for(let i = 0; i < player; i++) {
     clicked.push([0,0,0,0,0,0]);
 }
 
-let clicked1 = clicked[0];
-let clicked2 = clicked[1];
-let clicked3 = clicked[2];
 
 let intervalHolder = null;
 let intervalHolder2 = null;
-let url = window.location.protocol + '//' + window.location.host + '/status';
+let url = window.location.protocol + '//' + window.location.host;
 console.log(url);
 
 
+function init() {
+    let data = {};
+    data["player"] = player;
+    fetch(url + '/init', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.log('Error: ', error);
+        })
+}
+
 
 function updateDisplay() {
-    fetch(url).then((res) => {
+    fetch(url + '/status').then((res) => {
         if (!res.ok) {
             throw new Error("HTTP error " + res.status);
         }
@@ -31,19 +54,23 @@ function updateDisplay() {
         j.then((data) => {
            clicked = data;
            console.log(clicked);
-           clicked1 = clicked["cl1"];
-           clicked2 = clicked["cl2"];
-           clicked3 = clicked["cl3"];
-           console.log(clicked1);
+           for(let i = 0; i < player; i++) {
+               clicked[i] = clicked["cl" + (i+1).toString()];
+           }
+           console.log(clicked[0]);
            //intervalHolder = setInterval(updateDisplay, 2000);
         });
     })
 }
 
 function updateDatabase() {
-    const data = {"cl1": clicked1, "cl2": clicked2, "cl3":clicked3};
+    const data = {};
+    for(let i = 0; i < player; i++) {
+        data["cl" + (i+1).toString()] = clicked[i];
+    }
+    console.log("data:" + JSON.stringify(data));
 
-    fetch(window.location.protocol + '//' + window.location.host + '/', {
+    fetch(url + '/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -61,9 +88,10 @@ function updateDatabase() {
 
 function reset() {
 
-    clicked1 = [0,0,0,0,0,0];
-    clicked2 = [0,0,0,0,0,0];
-    clicked3 = [0,0,0,0,0,0];
+    clicked = [];
+    for(let i = 0; i < player; i++) {
+        clicked.push([0,0,0,0,0,0]);
+    }
 
     fetch(window.location.protocol + '//' + window.location.host + '/reset', {
         method: 'Post',
@@ -88,20 +116,17 @@ gameCanvas.addEventListener('click', function(event) {
    let start = -1;
    let cl = [];
 
-   if(x < fieldWidth) {
-       start = 0;
-       cl = clicked1;
-       console.log("1");
-   } else if (x < fieldWidth*2) {
-       start = fieldWidth;
-       cl = clicked2;
-       console.log("2")
-   } else if (x < fieldWidth*3) {
-       start = fieldWidth*2;
-       cl = clicked3;
-       console.log("3");
-   } else {
-       alert("Motherfucker what?");
+   for(let i = 0; i < player; i++) {
+       if(x < (i+1)*fieldWidth) {
+           start = i * fieldWidth;
+           cl = clicked[i];
+           console.log((i+1));
+           break;
+       }
+   }
+
+   if(x > fieldWidth*player) {
+       alert("Sorry ,what?");
        return;
    }
 
@@ -186,6 +211,7 @@ if(gameCanvas) {
     let context = gameCanvas.getContext('2d');
 
     if(context) {
+        init();
         updateDisplay();
         intervalHolder2 = setInterval(updateDisplay, 5000);
         intervalHolder = setInterval(mainLoop, 15);

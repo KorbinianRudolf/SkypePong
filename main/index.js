@@ -35,23 +35,55 @@ router.post('/', (req, res) => {
    const data = req.body;
    const jsonFile = fs.readFileSync(__dirname + '/status.json');
    const status = JSON.parse(jsonFile);
+   let player = status["player"];
 
-   const res1 = check(data["cl1"], status["cl1"]);
-   const res2 = check(data["cl2"], status["cl2"]);
-   const res3 = check(data["cl3"], status["cl3"]);
-   const newStatus = JSON.stringify({cl1: res1, cl2: res2, cl3: res3});
+   let newStatus = {};
+   newStatus["player"] = player;
 
-   fs.writeFileSync(__dirname + '/status.json', newStatus);
-   res.json(newStatus);
+   for(let i = 0; i < player; i++) {
+       let cur = "cl" + (i+1).toString();
+        newStatus[cur] = check(data[cur], status[cur]);
+        console.log("check" + newStatus[cur]);
+   }
+
+   const result = JSON.stringify(newStatus);
+   fs.writeFileSync(__dirname + '/status.json', result);
+   res.json(result);
 });
 
 router.post('/reset', (req, res) => {
-    const newStatus = JSON.stringify({cl1: [0,0,0,0,0,0], cl2: [0,0,0,0,0,0], cl3: [0,0,0,0,0,0]});
+    const jsonFile = fs.readFileSync(__dirname + '/status.json');
+    console.log(jsonFile);
+    const status = JSON.parse(jsonFile);
+    let player = status["player"];
+    let newStatus = {};
+    newStatus["player"] =  player;
 
-    fs.writeFileSync(__dirname + '/status.json', newStatus);
-    res.json(newStatus);
+    for(let i = 0; i < player; i++) {
+        let cur = "cl" + (i+1).toString();
+        newStatus[cur] = [0,0,0,0,0,0];
+    }
+
+    let str = JSON.stringify(newStatus);
+
+
+    fs.writeFileSync(__dirname + '/status.json', str);
+    res.json(str);
 });
 
+router.post('/init', (req, res) => {
+    const player = req.body["player"];
+    let newStatus = {};
+    newStatus["player"] = player;
+    for(let i = 0; i < player; i++) {
+        newStatus["cl" + (i+1).toString()] = [0,0,0,0,0,0];
+    }
+
+    let str = JSON.stringify(newStatus);
+    fs.writeFileSync(__dirname + '/status.json', str);
+    res.json(str);
+
+});
 
 router.get('/status', (req,res) => {
     const jsonFile = fs.readFileSync(__dirname + '/status.json');
